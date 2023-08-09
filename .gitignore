@@ -31,3 +31,18 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+## Maven:
+!.mvn/wrapper/maven-wrapper.jar
+/.mvn/
+/mvnw
+/mvnw.bat
+mvnw.cmd
+/log/
+*.log*
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.next
+release.properties
