@@ -1,13 +1,14 @@
 package com.nature.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.nature.domain.Image;
 import com.nature.repository.ImageRepository;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -23,11 +24,12 @@ public class ImageServiceImpl implements ImageService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Image read(Long imageId) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.getOne(imageId);
 	}
 
+	
 	@Override
 	public void modify(Image image) throws Exception {
 		// TODO Auto-generated method stub

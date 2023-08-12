@@ -1,10 +1,7 @@
 package com.nature.controller.Image;
 
-import java.awt.PageAttributes.MediaType;
 import java.io.File;
 import java.io.IOException;
-import java.net.http.HttpHeaders;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -36,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("image")
 public class ImageController {
 
-	private static final String itemService = null;
+	
 
 	private final ImageService imageService;
 	private final CategoryService categoryService;
@@ -100,6 +98,33 @@ public class ImageController {
 	}
 	
 
+	//이미지 게시글 상세 ===================================================================
+	@GetMapping("/{imageId}")
+	public ResponseEntity<Image> read(@PathVariable("imageId") Long imageId) throws Exception {
+	   
+		log.info("read" );
+		log.info("imageId = " + imageId );
+		
+		Image image = this.imageService.read(imageId);
+		System.out.println("image  = " + image );
+		
+	   return new ResponseEntity<>(image, HttpStatus.OK);
+	
+	}
+
+	
+	
+//	//이미지 게시글 삭제
+//	@DeleteMapping("/{itemId}")
+//	public ResponseEntity<Void> remove(@PathVariable("itemId") Long itemId) throws Exception {
+//	log.info("remove");
+//
+//	this.itemService.remove(itemId);
+//
+//	return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+//	}
+	
+	
 	
 	//사진 미리보기 
 //	@GetMapping("/display")
@@ -165,25 +190,7 @@ public class ImageController {
 //	
 //	
 //	
-//	//이미지 게시글 상세 
-//	@GetMapping("/{itemId}")
-//	public ResponseEntity<Item> read(@PathVariable("itemId") Long itemId) throws Exception {
-//	log.info("read");
-//
-//	Item item = this.itemService.read(itemId);
-//
-//	return new ResponseEntity<>(item, HttpStatus.OK);
-//	}
-//	
-//	//이미지 게시글 삭제
-//	@DeleteMapping("/{itemId}")
-//	public ResponseEntity<Void> remove(@PathVariable("itemId") Long itemId) throws Exception {
-//	log.info("remove");
-//
-//	this.itemService.remove(itemId);
-//
-//	return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-//	}
+
 //	
 //	
 //	//이미지 게시글 수정
