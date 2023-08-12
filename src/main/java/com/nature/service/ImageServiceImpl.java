@@ -28,7 +28,14 @@ public class ImageServiceImpl implements ImageService {
 	public Image read(Long imageId) throws Exception {
 		return repository.getOne(imageId);
 	}
-
+	
+	@Override
+	public String getPicture(Long imageId) throws Exception {
+		
+		Image image =  repository.getOne(imageId);
+		return image.getPictureUrl();
+	}
+	
 	
 	@Override
 	public void modify(Image image) throws Exception {
@@ -48,10 +55,5 @@ public class ImageServiceImpl implements ImageService {
 		return null;
 	}
 
-	@Override
-	public String getPicture(Long itemId) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 }

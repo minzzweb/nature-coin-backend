@@ -6,7 +6,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -111,6 +113,53 @@ public class ImageController {
 	   return new ResponseEntity<>(image, HttpStatus.OK);
 	
 	}
+	
+	//이미지 사진 가져오기===================================================================
+	@GetMapping("/display")
+	public ResponseEntity<byte[]> displayFile(Long imageId)throws Exception{
+		
+		ResponseEntity<byte[]> entity = null;
+		
+		String fileName = imageService.getPicture(imageId);
+		
+		log.info("FILE NAME: " + fileName);
+		
+		try {
+			String formatName = fileName.substring(fileName.lastIndexOf(".") + 1);
+			MediaType mediaType = getMediaType(formatName);
+			HttpHeaders headers = new HttpHeaders();
+			File file = new File(uploadPath + File.separator + fileName);
+			
+			if (mediaType != null) {
+				headers.setContentType(mediaType);
+				}
+			entity = new ResponseEntity<byte[]>(FileCopyUtils.copyToByteArray(file), headers, HttpStatus.CREATED);
+		} catch (Exception e) {
+			e.printStackTrace();
+			entity = new ResponseEntity<byte[]>(HttpStatus.BAD_REQUEST);
+			}
+		return entity;
+	}
+	
+	
+	private MediaType getMediaType(String formatName){
+		
+		if(formatName != null) {
+		if(formatName.equals("JPG")) {
+				return MediaType.IMAGE_JPEG;
+			}
+
+		if(formatName.equals("GIF")) {
+				return MediaType.IMAGE_GIF;
+		 }
+
+			if(formatName.equals("PNG")) {
+				return MediaType.IMAGE_PNG;
+			}
+		}
+
+		return null;
+	 }
 
 	
 	
@@ -126,57 +175,7 @@ public class ImageController {
 	
 	
 	
-	//사진 미리보기 
-//	@GetMapping("/display")
-//	public ResponseEntity<byte[]> displayFile(Long itemId) throws Exception {
-//	ResponseEntity<byte[]> entity = null;
-//
-//	String fileName = itemService.getPicture(itemId);
-//
-//	log.info("FILE NAME: " + fileName);
-//
-//	try {
-//
-//	String formatName = fileName.substring(fileName.lastIndexOf(".") + 1);
-//
-//	MediaType mediaType = getMediaType(formatName);
-//
-//	HttpHeaders headers = new HttpHeaders();
-//
-//	File file = new File(uploadPath + File.separator + fileName);
-//
-//	if (mediaType != null) {
-//	headers.setContentType(mediaType);
-//	}
-//
-//	entity = new ResponseEntity<byte[]>(FileCopyUtils.copyToByteArray(file), 
-//	
-//			headers, HttpStatus.CREATED);
-//	} catch (Exception e) {
-//	e.printStackTrace();
-//	entity = new ResponseEntity<byte[]>(HttpStatus.BAD_REQUEST);
-//	}
-//
-//	return entity;
-//	}
-//
-//	private MediaType getMediaType(String formatName){
-//	if(formatName != null) {
-//	if(formatName.equals("JPG")) {
-//	return MediaType.IMAGE_JPEG;
-//	}
-//
-//	if(formatName.equals("GIF")) {
-//	return MediaType.IMAGE_GIF;
-//	}
-//
-//	if(formatName.equals("PNG")) {
-//	return MediaType.IMAGE_PNG;
-//	}
-//	}
-//
-//	return null;
-//	}
+	
 
 	
 //    //게시글 목록
@@ -186,9 +185,6 @@ public class ImageController {
 //	List<Item> itemList = this.itemService.list();
 //	return new ResponseEntity<>(itemList, HttpStatus.OK);
 //	}
-//	
-//	
-//	
 //	
 
 //	
