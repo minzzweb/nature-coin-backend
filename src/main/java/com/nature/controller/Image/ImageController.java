@@ -3,8 +3,8 @@ package com.nature.controller.Image;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -36,62 +36,59 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = {"http://localhost:8081", "http://localhost:3000"})
+@CrossOrigin(origins = { "http://localhost:8081", "http://localhost:3000" })
 @RequestMapping("image")
 public class ImageController {
 
-	
-
 	private final ImageService imageService;
 	private final CategoryService categoryService;
-	
+
 	@Value("${upload.path}")
 	private String uploadPath;
-	
-	
-	//이미지 게시글 등록 ===================================================================
+
+	// 이미지 게시글 등록
+	// ===================================================================
 	@PostMapping
-	public ResponseEntity<Image> register(@RequestPart("image") String imageString, 
-			@RequestPart("file") MultipartFile picture,@RequestPart("categoryId") String categoryId 
-			) throws Exception{
-		
-		 log.info("imageString:" + imageString);
-		
-		 Image image = new ObjectMapper().readValue(imageString, Image.class);
-		 
-		 String imageContent = image.getImageContent();
-		 String imagetitle = image.getImageTitle();
-		 //String imageWriter = image.getImageWriter(); //임시  ->로그인한 유저가 자동 저장 되어야할 것 같은데..?
-		 //Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		 //String imageWriter = authentication.getName(); // 현재 로그인한 사용자명
-		 String imageWriter ="chominjoo";
-		 Category category = categoryService.findById(categoryId).get();
-		  
+	public ResponseEntity<Image> register(@RequestPart("image") String imageString,
+			@RequestPart("file") MultipartFile picture, @RequestPart("categoryId") String categoryId) throws Exception {
+
+		log.info("imageString:" + imageString);
+
+		Image image = new ObjectMapper().readValue(imageString, Image.class);
+
+		String imageContent = image.getImageContent();
+		String imagetitle = image.getImageTitle();
+		// String imageWriter = image.getImageWriter(); //임시 ->로그인한 유저가 자동 저장 되어야할 것
+		// 같은데..?
+		// Authentication authentication =
+		// SecurityContextHolder.getContext().getAuthentication();
+		// String imageWriter = authentication.getName(); // 현재 로그인한 사용자명
+		String imageWriter = "chominjoo";
+		Category category = categoryService.findById(categoryId).get();
+
 		image.setImageContent(imageContent);
 		image.setImageTitle(imagetitle);
 		image.setImageWriter(imageWriter);
 		image.setPicture(picture);
 		image.setCategoryId(category);
-		
-		MultipartFile file = image.getPicture();	 
+
+		MultipartFile file = image.getPicture();
 		log.info("originalName: " + file.getOriginalFilename());
 		log.info("size: " + file.getSize());
-		log.info("contentType: " + file.getContentType()); 
+		log.info("contentType: " + file.getContentType());
 		String createdFileName = uploadFile(file.getOriginalFilename(), file.getBytes());
 		image.setPictureUrl(createdFileName);
 
-		this.imageService.register(image); //등록!
+		this.imageService.register(image); // 등록!
 		log.info("register image.getImageId() = " + image.getImageId());
-		 
-		Image createdImage = new Image();
-		 
-		createdImage.setImageId(image.getImageId());
-			 
-		return new ResponseEntity<>(createdImage,HttpStatus.OK);
-		 
-	}
 
-	
+		Image createdImage = new Image();
+
+		createdImage.setImageId(image.getImageId());
+
+		return new ResponseEntity<>(createdImage, HttpStatus.OK);
+
+	}
 
 	private String uploadFile(String originalFilename, byte[] fileData) throws IOException {
 		UUID uid = UUID.randomUUID();
@@ -102,142 +99,130 @@ public class ImageController {
 
 		return createdFileName;
 	}
-	
 
-	//이미지 게시글 상세 ===================================================================
+	// 이미지 게시글 상세
+	// ===================================================================
 	@GetMapping("/{imageId}")
 	public ResponseEntity<Map<String, Object>> read(@PathVariable("imageId") Long imageId) throws Exception {
-	   
-		log.info("read" );
-		log.info("imageId = " + imageId );
-		
-		
+
+		log.info("read");
+		log.info("imageId = " + imageId);
+
 		Image image = this.imageService.read(imageId);
-		
+
 		Map<String, Object> responseData = new HashMap<>();
-	    responseData.put("image", image);
-	    responseData.put("categoryName", image.getCategoryId().getCategoryName());
-		
-	
-	   return new ResponseEntity<>(responseData, HttpStatus.OK);
-	
+		responseData.put("image", image);
+		responseData.put("categoryName", image.getCategoryId().getCategoryName());
+
+		return new ResponseEntity<>(responseData, HttpStatus.OK);
+
 	}
-	
-	//이미지 사진 가져오기===================================================================
+
+	// 이미지 사진
+	// 가져오기===================================================================
 	@GetMapping("/display")
-	public ResponseEntity<byte[]> displayFile(Long imageId)throws Exception{
-		
+	public ResponseEntity<byte[]> displayFile(Long imageId) throws Exception {
+
 		ResponseEntity<byte[]> entity = null;
-		
+
 		String fileName = imageService.getPicture(imageId);
-		
+
 		log.info("FILE NAME: " + fileName);
-		
+
 		try {
 			String formatName = fileName.substring(fileName.lastIndexOf(".") + 1);
 			MediaType mediaType = getMediaType(formatName);
 			HttpHeaders headers = new HttpHeaders();
 			File file = new File(uploadPath + File.separator + fileName);
-			
+
 			if (mediaType != null) {
 				headers.setContentType(mediaType);
-				}
+			}
 			entity = new ResponseEntity<byte[]>(FileCopyUtils.copyToByteArray(file), headers, HttpStatus.CREATED);
 		} catch (Exception e) {
 			e.printStackTrace();
 			entity = new ResponseEntity<byte[]>(HttpStatus.BAD_REQUEST);
-			}
+		}
 		return entity;
 	}
-	
-	
-	private MediaType getMediaType(String formatName){
-		
-		if(formatName != null) {
-		if(formatName.equals("JPG")) {
+
+	private MediaType getMediaType(String formatName) {
+
+		if (formatName != null) {
+			if (formatName.equals("JPG")) {
 				return MediaType.IMAGE_JPEG;
 			}
 
-		if(formatName.equals("GIF")) {
+			if (formatName.equals("GIF")) {
 				return MediaType.IMAGE_GIF;
-		 }
+			}
 
-			if(formatName.equals("PNG")) {
+			if (formatName.equals("PNG")) {
 				return MediaType.IMAGE_PNG;
 			}
 		}
 
 		return null;
-	 }
-
-	
-	//이미지 게시판 수정 ===================================================================
-	@PutMapping
-	public ResponseEntity<Image> modify(@RequestPart("image") String imageString, 
-			@RequestPart("file") MultipartFile picture ) throws Exception {
-		
-		 log.info("imageString: " + imageString);
-	
-		 Image image = new ObjectMapper().readValue(imageString, Image.class);
-		 
-		 String imagetitle = image.getImageTitle();
-		 String imageContent = image.getImageContent();
-		 
-		 image.setImageTitle(imagetitle);
-		 image.setImageContent(imageContent);
-		 
-		 
-		 if(picture!=null) {
-			 image.setPicture(picture);
-			 
-			 MultipartFile file = image.getPicture();
-			 log.info("originalName:" + file.getOriginalFilename());
-			 log.info("size : " + file.getSize()  );
-			 log.info("contentType :" + file.getContentType());
-			 
-			 String createdFileName = uploadFile(file.getOriginalFilename(), file.getBytes());
-			 image.setPictureUrl(createdFileName);
-		 }else {
-			 Image oldImage = this.imageService.read(image.getImageId());
-			 image.setPictureUrl(oldImage.getPictureUrl());
-		 }
-		 
-		 this.imageService.modify(image);
-		 
-		 Image modifiedImage = new Image();
-		 
-		 modifiedImage.setImageId(image.getImageId());
-		 
-		 return new ResponseEntity<Image>(modifiedImage, HttpStatus.OK);
 	}
-		
 
+	// 이미지 게시판 수정
+	// ===================================================================
+	@PutMapping
+	public ResponseEntity<Image> modify(@RequestPart("image") String imageString,
+			@RequestPart(name = "file", required = false) MultipartFile picture) throws Exception {
+
+		log.info("imageString: " + imageString);
+
+		Image image = new ObjectMapper().readValue(imageString, Image.class);
 	
-	//이미지 게시판 삭제 ===================================================================
+		  String imagetitle = image.getImageTitle(); 
+		  String imageContent=image.getImageContent();
+		  
+		  image.setImageTitle(imagetitle); 
+		  image.setImageContent(imageContent);
+		  
+		  if(picture!=null) {
+			  image.setPicture(picture);
+		      MultipartFile file = image.getPicture(); 
+		      
+		      log.info("originalName:" + file.getOriginalFilename()); 
+		      log.info("size : " + file.getSize() );
+		      log.info("contentType :" + file.getContentType());
+		  
+			  String createdFileName = uploadFile(file.getOriginalFilename(),file.getBytes());
+			  image.setPictureUrl(createdFileName); 
+			  }
+		  else { 
+			  Image oldImage = this.imageService.read(image.getImageId());
+		      image.setPictureUrl(oldImage.getPictureUrl()); }
+		  
+		      this.imageService.modify(image);
+		 
+			 Image modifiedImage = new Image();
+	
+			 modifiedImage.setImageId(image.getImageId());
+
+	    	return new ResponseEntity<Image>(modifiedImage, HttpStatus.OK);
+	}
+
+	// 이미지 게시판 삭제
+	// ===================================================================
 	@DeleteMapping("/{imageId}")
 	public ResponseEntity<Void> remove(@PathVariable("imageId") Long imageId) throws Exception {
-	log.info("remove");
+		log.info("remove");
 
-	this.imageService.remove(imageId);
+		this.imageService.remove(imageId);
 
-	return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
-	
-	
-	
-	
 
-	
-//    //게시글 목록
+	// 이미지 게시판 목록 =========카테고리
+	// 가져가야되는데==========================================================
 //	@GetMapping
-//	public ResponseEntity<List<Item>> list() throws Exception {
+//	public ResponseEntity<List<Image>> list() throws Exception {
 //	log.info("list");
-//	List<Item> itemList = this.itemService.list();
+//	List<Image> itemList = this.imageService.list();
 //	return new ResponseEntity<>(itemList, HttpStatus.OK);
 //	}
-//	
-
-//	
-//	
 
 }
