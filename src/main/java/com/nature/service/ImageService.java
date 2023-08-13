@@ -14,11 +14,11 @@ public interface ImageService {
 	
 	public String getPicture(Long itemId) throws Exception;
 	
-	
-
 	public void modify(Image image) throws Exception;
 
 	public void remove(Long imageId) throws Exception;
+
+	
 
 	public List<Image> list() throws Exception;
 

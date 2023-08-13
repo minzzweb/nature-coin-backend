@@ -2,6 +2,8 @@ package com.nature.controller.Image;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,9 +14,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,7 +55,7 @@ public class ImageController {
 			@RequestPart("file") MultipartFile picture,@RequestPart("categoryId") String categoryId 
 			) throws Exception{
 		
-		log.info("imageString:" + imageString);
+		 log.info("imageString:" + imageString);
 		
 		 Image image = new ObjectMapper().readValue(imageString, Image.class);
 		 
@@ -82,7 +86,7 @@ public class ImageController {
 		Image createdImage = new Image();
 		 
 		createdImage.setImageId(image.getImageId());
-		 
+			 
 		return new ResponseEntity<>(createdImage,HttpStatus.OK);
 		 
 	}
@@ -102,15 +106,20 @@ public class ImageController {
 
 	//이미지 게시글 상세 ===================================================================
 	@GetMapping("/{imageId}")
-	public ResponseEntity<Image> read(@PathVariable("imageId") Long imageId) throws Exception {
+	public ResponseEntity<Map<String, Object>> read(@PathVariable("imageId") Long imageId) throws Exception {
 	   
 		log.info("read" );
 		log.info("imageId = " + imageId );
 		
-		Image image = this.imageService.read(imageId);
-		System.out.println("image  = " + image );
 		
-	   return new ResponseEntity<>(image, HttpStatus.OK);
+		Image image = this.imageService.read(imageId);
+		
+		Map<String, Object> responseData = new HashMap<>();
+	    responseData.put("image", image);
+	    responseData.put("categoryName", image.getCategoryId().getCategoryName());
+		
+	
+	   return new ResponseEntity<>(responseData, HttpStatus.OK);
 	
 	}
 	
@@ -162,16 +171,57 @@ public class ImageController {
 	 }
 
 	
+	//이미지 게시판 수정 ===================================================================
+	@PutMapping
+	public ResponseEntity<Image> modify(@RequestPart("image") String imageString, 
+			@RequestPart("file") MultipartFile picture ) throws Exception {
+		
+		 log.info("imageString: " + imageString);
 	
-//	//이미지 게시글 삭제
-//	@DeleteMapping("/{itemId}")
-//	public ResponseEntity<Void> remove(@PathVariable("itemId") Long itemId) throws Exception {
-//	log.info("remove");
-//
-//	this.itemService.remove(itemId);
-//
-//	return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-//	}
+		 Image image = new ObjectMapper().readValue(imageString, Image.class);
+		 
+		 String imagetitle = image.getImageTitle();
+		 String imageContent = image.getImageContent();
+		 
+		 image.setImageTitle(imagetitle);
+		 image.setImageContent(imageContent);
+		 
+		 
+		 if(picture!=null) {
+			 image.setPicture(picture);
+			 
+			 MultipartFile file = image.getPicture();
+			 log.info("originalName:" + file.getOriginalFilename());
+			 log.info("size : " + file.getSize()  );
+			 log.info("contentType :" + file.getContentType());
+			 
+			 String createdFileName = uploadFile(file.getOriginalFilename(), file.getBytes());
+			 image.setPictureUrl(createdFileName);
+		 }else {
+			 Image oldImage = this.imageService.read(image.getImageId());
+			 image.setPictureUrl(oldImage.getPictureUrl());
+		 }
+		 
+		 this.imageService.modify(image);
+		 
+		 Image modifiedImage = new Image();
+		 
+		 modifiedImage.setImageId(image.getImageId());
+		 
+		 return new ResponseEntity<Image>(modifiedImage, HttpStatus.OK);
+	}
+		
+
+	
+	//이미지 게시판 삭제 ===================================================================
+	@DeleteMapping("/{imageId}")
+	public ResponseEntity<Void> remove(@PathVariable("imageId") Long imageId) throws Exception {
+	log.info("remove");
+
+	this.imageService.remove(imageId);
+
+	return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+	}
 	
 	
 	
@@ -189,51 +239,5 @@ public class ImageController {
 
 //	
 //	
-//	//이미지 게시글 수정
-//	@PutMapping
-//	public ResponseEntity<Item> modify(@RequestPart("item") String itemString, @RequestPart(name = "file", required = false) MultipartFile picture) throws Exception {
-//		log.info("itemString: " + itemString);
-//
-//		Item item = new ObjectMapper().readValue(itemString, Item.class);
-//
-//		String itemName = item.getItemName();
-//		String description = item.getDescription();
-//
-//		if(itemName != null) {
-//		log.info("item.getItemName(): " + itemName);
-//
-//		item.setItemName(itemName);
-//		}
-//
-//		if(description != null) {
-//		log.info("item.getDescription(): " + description);
-//
-//		item.setDescription(description);
-//		}
-//
-//
-//		if(picture != null) {
-//		item.setPicture(picture);
-//
-//		MultipartFile file = item.getPicture();
-//
-//		log.info("originalName: " + file.getOriginalFilename());
-//		log.info("size: " + file.getSize());
-//		log.info("contentType: " + file.getContentType());
-//		String createdFileName = uploadFile(file.getOriginalFilename(), file.getBytes());
-//
-//		item.setPictureUrl(createdFileName);
-//		}
-//		else {
-//		Item oldItem = this.itemService.read(item.getItemId());
-//		item.setPictureUrl(oldItem.getPictureUrl());
-//		}
-//
-//		this.itemService.modify(item);
-//
-//		Item modifiedItem = new Item();
-//		modifiedItem.setItemId(item.getItemId());
-//
-//		return new ResponseEntity<>(modifiedItem, HttpStatus.OK);
-//		}
+
 }

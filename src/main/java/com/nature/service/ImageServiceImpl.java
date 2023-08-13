@@ -38,17 +38,24 @@ public class ImageServiceImpl implements ImageService {
 	
 	
 	@Override
+	@Transactional
 	public void modify(Image image) throws Exception {
-		// TODO Auto-generated method stub
+		Image imageEntity = repository.getOne(image.getImageId());
+		
+		imageEntity.setImageTitle(image.getImageTitle());
+		imageEntity.setImageContent(image.getImageContent());
+		imageEntity.setPictureUrl(image.getPictureUrl());
 		
 	}
 
 	@Override
+	@Transactional
 	public void remove(Long imageId) throws Exception {
-		// TODO Auto-generated method stub
+		repository.deleteById(imageId);
 		
 	}
 
+	
 	@Override
 	public List<Image> list() throws Exception {
 		// TODO Auto-generated method stub
