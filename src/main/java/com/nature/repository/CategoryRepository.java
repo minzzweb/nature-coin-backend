@@ -9,6 +9,8 @@ import com.nature.domain.Category;
 public interface CategoryRepository extends JpaRepository<Category, String>{
 
 	
-	public Optional<Category> findById(String categoryId); 
+	public Optional<Category> findById(String categoryId);
+
+	public Optional<Category> findByCategoryName(String categoryName); 
 
 }

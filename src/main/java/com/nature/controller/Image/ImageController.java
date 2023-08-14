@@ -216,13 +216,23 @@ public class ImageController {
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
 
-	// 이미지 게시판 목록 =========카테고리
-	// 가져가야되는데==========================================================
-//	@GetMapping
-//	public ResponseEntity<List<Image>> list() throws Exception {
-//	log.info("list");
-//	List<Image> itemList = this.imageService.list();
-//	return new ResponseEntity<>(itemList, HttpStatus.OK);
-//	}
+	
+	
+	@GetMapping("/list/{categoryName}") // 경로 변수명 수정
+	public ResponseEntity<List<Image>> list(@PathVariable("categoryName") String categoryName) throws Exception {
+	     
+		log.info("categoryName = " + categoryName);
+	    
+	    Category categoryEntity = categoryService.findByCategoryName(categoryName).get();
+	   
+		List<Image> imageList = this.imageService.listByCategoryId(categoryEntity);
+		 
+		log.info("imageList = " + imageList);
+		
+		return new ResponseEntity<>(imageList,HttpStatus.OK);
+		
 
+	}
+
+	
 }

@@ -9,6 +9,8 @@ public interface CategoryService {
 
 	public Optional<Category> findById(String categoryId) throws Exception;
 
+	public Optional<Category> findByCategoryName(String category) throws Exception;
+
 	
 	
 }

@@ -22,7 +22,14 @@ public class CategoryServiceImpl implements CategoryService {
 		
 		return repository.findById(categoryId);
 	}
-	
+
+
+	@Override
+	public Optional<Category> findByCategoryName(String categoryName) throws Exception {
+
+		return repository.findByCategoryName(categoryName);
+	}
+
 	
 
 }

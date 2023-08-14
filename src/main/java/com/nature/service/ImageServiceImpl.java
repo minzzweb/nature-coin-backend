@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.nature.domain.Category;
 import com.nature.domain.Image;
 import com.nature.repository.ImageRepository;
 
@@ -55,12 +56,10 @@ public class ImageServiceImpl implements ImageService {
 		
 	}
 
-	
 	@Override
-	public List<Image> list() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Image> listByCategoryId(Category category) {
+		return repository.findAllByCategoryId(category);
 	}
 
-	
+
 }

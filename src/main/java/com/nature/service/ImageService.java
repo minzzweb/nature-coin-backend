@@ -4,6 +4,7 @@ package com.nature.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.nature.domain.Category;
 import com.nature.domain.Image;
 
 public interface ImageService {
@@ -18,10 +19,8 @@ public interface ImageService {
 
 	public void remove(Long imageId) throws Exception;
 
-	
+	public List<Image> listByCategoryId(Category category);
 
-	public List<Image> list() throws Exception;
 
-	
 	
 }
