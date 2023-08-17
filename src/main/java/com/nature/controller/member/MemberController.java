@@ -111,7 +111,7 @@ public class MemberController {
 		}
 		
 		//최초 관리 생성 불가 메세지 
-		String message = messageSource.getMessage("common.cannotSetupAdmin", null, Locale.KOREAN);
+		String message = messageSource.getMessage("최초관리자를 등록할 수 없습니다.", null, Locale.KOREAN);
 		
 		return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
 	}
