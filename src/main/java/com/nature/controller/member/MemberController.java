@@ -1,13 +1,15 @@
 package com.nature.controller.member;
 
-import java.util.Locale;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +20,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nature.common.security.domain.CustomUser;
+import com.nature.common.security.jwt.constants.SecurityConstants;
 import com.nature.domain.Member;
 import com.nature.service.MemberService;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -109,7 +116,18 @@ public class MemberController {
 		return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
 	}
 	
-	
-	
+
+	@GetMapping("/myinfo")
+	public ResponseEntity<Member> getMyInfo(@AuthenticationPrincipal CustomUser customUser) throws Exception {
+		
+		Long userNo = customUser.getUserNo();
+		log.info("register userNo = " + userNo);
+
+		Member member = service.read(userNo);
+
+		member.setPassword("");
+
+		return new ResponseEntity<>(member, HttpStatus.OK);
+		}
 	
 }

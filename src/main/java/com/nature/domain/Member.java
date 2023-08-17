@@ -21,6 +21,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -44,6 +45,7 @@ public class Member {
 	
 	@NotBlank
 	@Column(nullable = false, length = 30, unique = true)
+	@Email
 	private String email;
 	
 	@NotBlank
