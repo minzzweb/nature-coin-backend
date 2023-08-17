@@ -19,7 +19,9 @@ public interface ImageService {
 
 	public void remove(Long imageId) throws Exception;
 
-	public List<Image> listByCategoryId(Category category);
+	public List<Image> listByCategoryId(Category category) throws Exception;
+
+	public List<Image> list() throws Exception;
 
 
 	

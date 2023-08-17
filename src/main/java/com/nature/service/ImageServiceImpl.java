@@ -1,15 +1,17 @@
 package com.nature.service;
 
 import java.util.List;
-import java.util.Optional;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.nature.domain.Category;
 import com.nature.domain.Image;
 import com.nature.repository.ImageRepository;
 
-import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -59,6 +61,15 @@ public class ImageServiceImpl implements ImageService {
 	@Override
 	public List<Image> listByCategoryId(Category category) {
 		return repository.findAllByCategoryId(category);
+	}
+
+	@Override
+	public List<Image> list() throws Exception {
+		
+		Sort sort = Sort.by(Sort.Direction.DESC, "imageId");
+        Pageable pageable = PageRequest.of(0, 12, sort);
+        List<Image> recentImages = repository.findAll(pageable).getContent();
+        return recentImages;
 	}
 
 

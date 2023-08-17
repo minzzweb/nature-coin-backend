@@ -218,7 +218,7 @@ public class ImageController {
 
 	
 	
-	@GetMapping("/list/{categoryName}") // 경로 변수명 수정
+	@GetMapping("/list/{categoryName}") 
 	public ResponseEntity<List<Image>> list(@PathVariable("categoryName") String categoryName) throws Exception {
 	     
 		log.info("categoryName = " + categoryName);
@@ -233,6 +233,19 @@ public class ImageController {
 		
 
 	}
+	
+	@GetMapping
+	public ResponseEntity<List<Image>> list() throws Exception {
+		
+		log.info("main list");
+		List<Image> ImageList = this.imageService.list();
+		
+		System.out.println("ImageList" +ImageList);
+
+	   return new ResponseEntity<>(ImageList, HttpStatus.OK);
+		
+	}
+		
 
 	
 }
