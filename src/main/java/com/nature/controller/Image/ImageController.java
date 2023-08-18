@@ -194,14 +194,13 @@ public class ImageController {
 			  }
 		  else { 
 			  Image oldImage = this.imageService.read(image.getImageId());
-		      image.setPictureUrl(oldImage.getPictureUrl()); }
-		  
+		      image.setPictureUrl(oldImage.getPictureUrl()); 
+		      
+		  }
 		      this.imageService.modify(image);
-		 
-			 Image modifiedImage = new Image();
-	
-			 modifiedImage.setImageId(image.getImageId());
-
+			  Image modifiedImage = new Image();
+			  modifiedImage.setImageId(image.getImageId());
+ 
 	    	return new ResponseEntity<Image>(modifiedImage, HttpStatus.OK);
 	}
 
