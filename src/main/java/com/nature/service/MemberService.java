@@ -8,12 +8,15 @@ public interface MemberService {
 
 	public Member read(Long userNo) throws Exception;
 
-
-	public void modifyNickname(Member member) throws Exception;
+	public void modify(Member member) throws Exception;
 
 	public long countAll() throws Exception;
 
 	public void setupAdmin(Member member) throws Exception;
+
+	public String getPicture(Long userNo)  throws Exception;
+
+	
 
 	
 }

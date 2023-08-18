@@ -1,16 +1,23 @@
 package com.nature.controller.member;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,10 +25,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nature.common.security.domain.CustomUser;
 import com.nature.common.security.jwt.constants.SecurityConstants;
+import com.nature.domain.Image;
 import com.nature.domain.Member;
 import com.nature.service.MemberService;
 
@@ -38,6 +49,9 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberController {
 
 	private final MemberService service;
+	
+	@Value("${upload.path}")
+	private String uploadPath;
 	
 	//비밀번호 암호 처리기
 	private final PasswordEncoder passwordEncoder;
@@ -67,35 +81,78 @@ public class MemberController {
 		return new ResponseEntity<>(member, HttpStatus.OK);
 	}
 	
-	//회원 닉네임 수정
-	@PutMapping("/{userNo}")
-	public ResponseEntity<Member> modifyNickname(@PathVariable("userNo") Long userNo, @RequestBody Map<String, String> nicknameMap) throws Exception {
-		log.info("modify : userNo = " + userNo);
+	
+	
+    //회원 프로필 수정
+	@PutMapping
+	public ResponseEntity<Member> modify(@RequestPart("member") String memberString, 
+			@RequestPart(name = "file", required = false) MultipartFile picture) throws Exception { 
 		
-		String newNickname = nicknameMap.get("newNickname");
+		  log.info("modify : memberString = " + memberString);
+		 
+		  Member member = new ObjectMapper().readValue(memberString, Member.class);
 
-		 Member member = new Member();
-		 member.setUserNo(userNo);
-		 member.setNickname(newNickname);
-		 service.modifyNickname(member);
+		  String nickname = member.getNickname();
+		  
+		  if(picture!=null) {
+			  
+			  member.setPicture(picture);
+		      MultipartFile file = member.getPicture(); 
+		      
+		      log.info("originalName:" + file.getOriginalFilename()); 
+		      log.info("size : " + file.getSize() );
+		      log.info("contentType :" + file.getContentType());
+		  
+			  String createdFileName = uploadFile(file.getOriginalFilename(),file.getBytes());
+			  log.info("modify : createdFileName = " + createdFileName);
+			  
+			  member.setPictureUrl(createdFileName); 
+			  
+			  }
+		  else { 
+			  Member oldMember = this.service.read(member.getUserNo());
+			  member.setPictureUrl(oldMember.getPictureUrl());
+			  log.info("oldMember.getPictureUrl() :" + oldMember.getPictureUrl());
+	  
+		  }
+		  
+		      this.service.modify(member);
+		      Member modifiedMember = new Member();
+	
+		      modifiedMember.setUserNo(member.getUserNo());
+		 
+	   return new ResponseEntity<>(modifiedMember, HttpStatus.OK); }
+	 
+	
+	
+	private String uploadFile(String originalFilename, byte[] fileData) throws IOException {
+		UUID uid = UUID.randomUUID();
+		String createdFileName = uid.toString() + "_" + originalFilename;
+		File target = new File(uploadPath, createdFileName);
 
-		return new ResponseEntity<>(member, HttpStatus.OK);
+		FileCopyUtils.copy(fileData, target);
+
+		return createdFileName;
 	}
 	
-	//회원 프로필사진 수정 
-	/*
-	 * @PutMapping("/profile/{userNo}") public ResponseEntity<Member>
-	 * modifyProfile(@PathVariable("userNo") Long userNo, @Validated @RequestBody
-	 * Member member) throws Exception { log.info("modify : member.getEmail() = " +
-	 * member.getEmail()); log.info("modify : userNo = " + userNo);
-	 * 
-	 * member.setUserNo(userNo);
-	 * 
-	 * 
-	 * return new ResponseEntity<>(member, HttpStatus.OK); }
-	 */
-	
-	
+	private MediaType getMediaType(String formatName) {
+
+		if (formatName != null) {
+			if (formatName.equals("JPG")) {
+				return MediaType.IMAGE_JPEG;
+			}
+
+			if (formatName.equals("GIF")) {
+				return MediaType.IMAGE_GIF;
+			}
+
+			if (formatName.equals("PNG")) {
+				return MediaType.IMAGE_PNG;
+			}
+		}
+
+		return null;
+	}
 	//최초 관리자 생성 
 	@PostMapping(value = "/setup", produces="text/plain;charset=UTF-8")
 	public ResponseEntity<String> setupAdmin(@Validated @RequestBody Member member)throws Exception {
@@ -128,6 +185,40 @@ public class MemberController {
 		member.setPassword("");
 
 		return new ResponseEntity<>(member, HttpStatus.OK);
-		}
+		
+	}
 	
+	// 이미지 사진
+		// 가져오기===================================================================
+		@GetMapping("/display")
+		public ResponseEntity<byte[]> displayFile(Long userNo) throws Exception {
+
+			ResponseEntity<byte[]> entity = null;
+
+			String fileName = service.getPicture(userNo);
+
+			log.info("FILE NAME: " + fileName);
+			
+			if(fileName!=null) {
+				try {
+					String formatName = fileName.substring(fileName.lastIndexOf(".") + 1);
+					MediaType mediaType = getMediaType(formatName);
+					HttpHeaders headers = new HttpHeaders();
+					File file = new File(uploadPath + File.separator + fileName);
+
+					if (mediaType != null) {
+						headers.setContentType(mediaType);
+					}
+					entity = new ResponseEntity<byte[]>(FileCopyUtils.copyToByteArray(file), headers, HttpStatus.CREATED);
+				} catch (Exception e) {
+					e.printStackTrace();
+					entity = new ResponseEntity<byte[]>(HttpStatus.BAD_REQUEST);
+				}
+				return entity;
+			}else {
+				return null;
+			}
+						
+		}	
+		
 }

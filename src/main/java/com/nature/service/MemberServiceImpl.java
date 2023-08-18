@@ -2,6 +2,7 @@ package com.nature.service;
 
 import org.springframework.stereotype.Service;
 
+import com.nature.domain.Image;
 import com.nature.domain.Member;
 import com.nature.domain.MemberAuth;
 import com.nature.repository.MemberRepository;
@@ -41,9 +42,11 @@ public class MemberServiceImpl implements MemberService {
 
 	//회원 수정 
 	@Override
-	public void modifyNickname(Member member) throws Exception {
+	public void modify(Member member) throws Exception {
 		Member memberEntity = repository.getOne(member.getUserNo());
 		memberEntity.setNickname(member.getNickname());
+		memberEntity.setPictureUrl(member.getPictureUrl());
+		
 		repository.save(memberEntity);
 	}
 
@@ -68,6 +71,14 @@ public class MemberServiceImpl implements MemberService {
 		memberEntity.addAuth(memberAuth);
 		
 		repository.save(memberEntity);
+	}
+
+	
+	@Override
+	public String getPicture(Long userNo) throws Exception {
+		
+		Member member =  repository.getOne(userNo);
+		return member.getPictureUrl();
 	}
 	
 }
