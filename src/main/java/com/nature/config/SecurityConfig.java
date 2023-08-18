@@ -44,7 +44,6 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http)throws Exception{
 		log.info("security config ...");
 		
-		http.cors();
 		http .csrf(AbstractHttpConfigurer::disable)
 			 .addFilterAt(new JwtAuthenticationFilter(authenticationManager(),  jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
 	         .addFilterBefore(new JwtRequestFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class) //사용자 정의 인증 필터추가
@@ -73,25 +72,5 @@ public class SecurityConfig {
 		return new CustomUserDetailsService();
 	}
 	
-	@Bean
-	public CorsConfigurationSource corsConfigurationSource() {
-	final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
-		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowCredentials(true);
-		config.addAllowedOrigin("*");
-		config.addAllowedHeader("*");
-		config.addAllowedMethod("OPTIONS");
-		config.addAllowedMethod("HEAD");
-		config.addAllowedMethod("GET");
-		config.addAllowedMethod("PUT");
-		config.addAllowedMethod("POST");
-		config.addAllowedMethod("DELETE");
-		config.addAllowedMethod("PATCH");
-		config.setExposedHeaders(Arrays.asList("Authorization","Content-Disposition"));
 	
-		source.registerCorsConfiguration("/**", config);
-
-	return source;
-	}
 }
