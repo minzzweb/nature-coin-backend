@@ -229,6 +229,8 @@ public class ImageController {
 	}
 
 	
+	// 이미지 게시판 목록
+	// ===================================================================
 	
 	@GetMapping("/list/{categoryName}") 
 	public ResponseEntity<List<Image>> list(@PathVariable("categoryName") String categoryName) throws Exception {
@@ -246,6 +248,8 @@ public class ImageController {
 
 	}
 	
+	// 메인 이미지 목록
+	// ===================================================================
 	@GetMapping
 	public ResponseEntity<List<Image>> list() throws Exception {
 		
@@ -257,6 +261,22 @@ public class ImageController {
 	   return new ResponseEntity<>(ImageList, HttpStatus.OK);
 		
 	}
+	
+	// 마이페이지 이미지 목록
+    // ===================================================================
+	@GetMapping("/mypage/list/myimage/{imageWriter}")
+	public ResponseEntity<List<Image>> mypageImageList(@PathVariable("imageWriter") String imageWriter) throws Exception{
+		
+		log.info("mypageImage list : imageWriter " + imageWriter);
+		List<Image> mypageImageList = this.imageService.mypageImagelist(imageWriter);
+		
+		for(Image images : mypageImageList) {
+			System.out.println(images.getImageTitle());
+		}
+		
+		return new ResponseEntity<>(mypageImageList, HttpStatus.OK);
+	} 
+	
 		
 
 	

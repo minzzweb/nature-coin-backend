@@ -85,6 +85,12 @@ public class ImageServiceImpl implements ImageService {
 		
 	}
 
+	@Override
+	public List<Image> mypageImagelist(String imageWriter) throws Exception {
+		
+		return repository.findByImageWriter(imageWriter);
+	}
+
 	
 
 

@@ -25,6 +25,8 @@ public interface ImageService {
 
 	public void modifyWriter(String oldNickname, String nickname) throws Exception;
 
+	public List<Image> mypageImagelist(String imageWriter) throws Exception;
+
 
 
 
