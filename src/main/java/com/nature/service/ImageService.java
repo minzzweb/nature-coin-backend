@@ -24,7 +24,5 @@ public interface ImageService {
 	public List<Image> list() throws Exception;
 
 
-
-
 	
 }

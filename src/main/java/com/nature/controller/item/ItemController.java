@@ -8,10 +8,8 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nature.common.security.domain.CustomUser;
 import com.nature.domain.Item;
 import com.nature.service.ItemService;
 
@@ -30,23 +27,10 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @RestController
 @CrossOrigin(origins = {"http://localhost:8081", "http://localhost:3000"})
-@RequestMapping("/test")
+@RequestMapping("/items")
 public class ItemController {
 	
-         @GetMapping
-         public ResponseEntity<String> test (@AuthenticationPrincipal CustomUser customUser){
-        	 log.info("CustomUser customUser" +"test" );
-        	 log.info("CustomUser customUser" +customUser.getEmail() );
-        	 
-        	 
-        	 System.out.println("머지 ㅠㅠㅠ");
-        	 
-        	 
-        	 return new ResponseEntity<>("성공", HttpStatus.OK);
-        	 
-        	
 
-         }
 }
 
 	

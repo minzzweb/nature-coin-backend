@@ -8,14 +8,10 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Role;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,12 +25,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nature.common.security.domain.CustomUser;
 import com.nature.domain.Category;
 import com.nature.domain.Image;
 import com.nature.service.CategoryService;
 import com.nature.service.ImageService;
-import com.nature.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,29 +42,28 @@ public class ImageController {
 
 	private final ImageService imageService;
 	private final CategoryService categoryService;
-	private final MemberService memberService;
 
 	@Value("${upload.path}")
 	private String uploadPath;
 
 	// 이미지 게시글 등록
 	// ===================================================================
-	
-    //@PreAuthorize("hasRole('MEMBER')")
 	@PostMapping
 	public ResponseEntity<Image> register(@RequestPart("image") String imageString,
-			@RequestPart("file") MultipartFile picture, @RequestPart("categoryId") String categoryId,
-			@AuthenticationPrincipal CustomUser customUser
-			) throws Exception {
+			@RequestPart("file") MultipartFile picture, @RequestPart("categoryId") String categoryId) throws Exception {
 
 		log.info("imageString:" + imageString);
-		
 
 		Image image = new ObjectMapper().readValue(imageString, Image.class);
 
 		String imageContent = image.getImageContent();
-		String imagetitle = image.getImageTitle();	
-		String imageWriter = memberService.findNickNamebyEmail(customUser.getEmail());		   
+		String imagetitle = image.getImageTitle();
+		// String imageWriter = image.getImageWriter(); //임시 ->로그인한 유저가 자동 저장 되어야할 것
+		// 같은데..?
+		// Authentication authentication =
+		// SecurityContextHolder.getContext().getAuthentication();
+		// String imageWriter = authentication.getName(); // 현재 로그인한 사용자명
+		String imageWriter = "chominjoo";
 		Category category = categoryService.findById(categoryId).get();
 
 		image.setImageContent(imageContent);
@@ -114,7 +107,6 @@ public class ImageController {
 
 		log.info("read");
 		log.info("imageId = " + imageId);
-		
 
 		Image image = this.imageService.read(imageId);
 
@@ -200,15 +192,11 @@ public class ImageController {
 			  String createdFileName = uploadFile(file.getOriginalFilename(),file.getBytes());
 			  image.setPictureUrl(createdFileName); 
 			  }
-		
-		  
 		  else { 
-	  
 			  Image oldImage = this.imageService.read(image.getImageId());
 		      image.setPictureUrl(oldImage.getPictureUrl()); 
 		      
 		  }
-		  
 		      this.imageService.modify(image);
 			  Image modifiedImage = new Image();
 			  modifiedImage.setImageId(image.getImageId());
@@ -216,7 +204,6 @@ public class ImageController {
 	    	return new ResponseEntity<Image>(modifiedImage, HttpStatus.OK);
 	}
 
-	
 	// 이미지 게시판 삭제
 	// ===================================================================
 	@DeleteMapping("/{imageId}")
