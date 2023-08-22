@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
 
 import com.nature.common.security.domain.CustomUser;
 import com.nature.domain.Member;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 
 //사용자 정의 유저 상세 클래스
 @Slf4j
+@Component
 public class CustomUserDetailsService implements UserDetailsService {
 	
 	@Autowired
@@ -21,7 +23,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 	
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		log.info("email : " + email);
+		log.info("nickname : " + email);
 		
 		Member member = repository.findByEmail(email); //사용자 아이디로 사용자 정보조회 
 		
