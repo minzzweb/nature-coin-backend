@@ -75,10 +75,19 @@ public class MemberServiceImpl implements MemberService {
 
 	
 	@Override
-	public String getPicture(Long userNo) throws Exception {
+	public String getPicture(String email) throws Exception {
 		
-		Member member =  repository.getOne(userNo);
+		Member member =  repository.findByEmail(email);
 		return member.getPictureUrl();
+	}
+
+	@Override
+	public String findNickNamebyEmail(String email) throws Exception {
+		
+		Member member = repository.findByEmail(email);
+		String nickname = member.getNickname();
+		
+		return nickname;
 	}
 	
 }
