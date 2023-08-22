@@ -14,7 +14,9 @@ public interface MemberService {
 
 	public void setupAdmin(Member member) throws Exception;
 
-	public String getPicture(Long userNo)  throws Exception;
+	public String getPicture(String email)  throws Exception;
+
+	public String findNickNamebyEmail(String email) throws Exception;
 
 	
 
