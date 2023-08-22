@@ -2,11 +2,7 @@ package com.nature.controller.member;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.FileCopyUtils;
@@ -31,14 +28,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nature.common.security.domain.CustomUser;
-import com.nature.common.security.jwt.constants.SecurityConstants;
-import com.nature.domain.Image;
 import com.nature.domain.Member;
 import com.nature.service.MemberService;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -77,7 +69,7 @@ public class MemberController {
 	@GetMapping("/{userNo}")
 	public ResponseEntity<Member> read(@PathVariable("userNo") Long userNo) throws Exception {
 		Member member = service.read(userNo);
-
+			
 		return new ResponseEntity<>(member, HttpStatus.OK);
 	}
 	
@@ -86,13 +78,12 @@ public class MemberController {
     //회원 프로필 수정
 	@PutMapping
 	public ResponseEntity<Member> modify(@RequestPart("member") String memberString, 
-			@RequestPart(name = "file", required = false) MultipartFile picture) throws Exception { 
+			@RequestPart(name = "file", required = false) MultipartFile picture,@AuthenticationPrincipal CustomUser customUser) throws Exception { 
 		
 		  log.info("modify : memberString = " + memberString);
-		 
+		  log.info("회원 상세 " + customUser.getEmail());
+		  
 		  Member member = new ObjectMapper().readValue(memberString, Member.class);
-
-		  String nickname = member.getNickname();
 		  
 		  if(picture!=null) {
 			  
@@ -121,7 +112,8 @@ public class MemberController {
 	
 		      modifiedMember.setUserNo(member.getUserNo());
 		 
-	   return new ResponseEntity<>(modifiedMember, HttpStatus.OK); }
+	   return new ResponseEntity<>(modifiedMember, HttpStatus.OK); 
+	}
 	 
 	
 	
@@ -173,7 +165,7 @@ public class MemberController {
 		return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
 	}
 	
-
+	
 	@GetMapping("/myinfo")
 	public ResponseEntity<Member> getMyInfo(@AuthenticationPrincipal CustomUser customUser) throws Exception {
 		
@@ -190,12 +182,12 @@ public class MemberController {
 	
 	// 이미지 사진
 		// 가져오기===================================================================
-		@GetMapping("/display")
-		public ResponseEntity<byte[]> displayFile(Long userNo) throws Exception {
+	@GetMapping("/display")
+	public ResponseEntity<byte[]> displayFile(String email) throws Exception {
 
 			ResponseEntity<byte[]> entity = null;
 
-			String fileName = service.getPicture(userNo);
+			String fileName = service.getPicture(email);
 
 			log.info("FILE NAME: " + fileName);
 			

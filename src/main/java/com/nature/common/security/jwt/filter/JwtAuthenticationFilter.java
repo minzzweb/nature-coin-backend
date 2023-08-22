@@ -53,9 +53,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, Authentication authentication) {
 		
 		CustomUser user = ((CustomUser) authentication.getPrincipal());
-		
+	
 		long userNo = user.getUserNo();
 		String email = user.getEmail();
+		
+		log.info("CustomUser test : userNo " + userNo);
+		log.info("CustomUser test : email " + email);
 
 		List<String> roles = user.getAuthorities()
 								.stream()
