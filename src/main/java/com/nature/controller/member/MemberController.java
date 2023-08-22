@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nature.common.security.domain.CustomUser;
 import com.nature.domain.Member;
+import com.nature.service.ImageService;
 import com.nature.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/users")
 public class MemberController {
 
-	private final MemberService service;
+	private final MemberService memberService;
+	private final ImageService imageService;
 	
 	@Value("${upload.path}")
 	private String uploadPath;
@@ -60,7 +62,7 @@ public class MemberController {
 		String inputPassword = member.getPassword();
 		member.setPassword(passwordEncoder.encode(inputPassword));
 		
-		service.register(member);
+		memberService.register(member);
 		
 		return new ResponseEntity<>(member, HttpStatus.OK);
 	}
@@ -68,7 +70,7 @@ public class MemberController {
 	//회원 상세 
 	@GetMapping("/{userNo}")
 	public ResponseEntity<Member> read(@PathVariable("userNo") Long userNo) throws Exception {
-		Member member = service.read(userNo);
+		Member member = memberService.read(userNo);
 			
 		return new ResponseEntity<>(member, HttpStatus.OK);
 	}
@@ -84,6 +86,9 @@ public class MemberController {
 		  log.info("회원 상세 " + customUser.getEmail());
 		  
 		  Member member = new ObjectMapper().readValue(memberString, Member.class);
+		  
+		  String oldNickname = memberService.findNickNamebyEmail(customUser.getEmail());
+		  log.info("닉네임 변경이전 닉네임 가져오기  " + oldNickname);
 		  
 		  if(picture!=null) {
 			  
@@ -101,13 +106,17 @@ public class MemberController {
 			  
 			  }
 		  else { 
-			  Member oldMember = this.service.read(member.getUserNo());
+			  Member oldMember = this.memberService.read(member.getUserNo());
 			  member.setPictureUrl(oldMember.getPictureUrl());
 			  log.info("oldMember.getPictureUrl() :" + oldMember.getPictureUrl());
 	  
 		  }
 		  
-		      this.service.modify(member);
+		      this.memberService.modify(member);
+		      //닉네임 수정시 게시판 작성자도 변경되어야함.
+		      String newNickname = member.getNickname();
+		      this.imageService.modifyWriter(oldNickname, newNickname);
+		      
 		      Member modifiedMember = new Member();
 	
 		      modifiedMember.setUserNo(member.getUserNo());
@@ -149,13 +158,13 @@ public class MemberController {
 	@PostMapping(value = "/setup", produces="text/plain;charset=UTF-8")
 	public ResponseEntity<String> setupAdmin(@Validated @RequestBody Member member)throws Exception {
 		log.info("setupAdmin : member.getUserName() = " + member.getEmail());
-		log.info("setupAdmin : service.countAll() = " + service.countAll());
+		log.info("setupAdmin : service.countAll() = " + memberService.countAll());
 		
 		//회원의 존재여부 
-		if(service.countAll() == 0) {
+		if(memberService.countAll() == 0) {
 			String inputPassword = member.getPassword();
 			member.setPassword(passwordEncoder.encode(inputPassword));
-			service.setupAdmin(member);
+			memberService.setupAdmin(member);
 			return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
 		}
 		
@@ -172,7 +181,7 @@ public class MemberController {
 		Long userNo = customUser.getUserNo();
 		log.info("register userNo = " + userNo);
 
-		Member member = service.read(userNo);
+		Member member = memberService.read(userNo);
 
 		member.setPassword("");
 
@@ -187,7 +196,7 @@ public class MemberController {
 
 			ResponseEntity<byte[]> entity = null;
 
-			String fileName = service.getPicture(email);
+			String fileName = memberService.getPicture(email);
 
 			log.info("FILE NAME: " + fileName);
 			

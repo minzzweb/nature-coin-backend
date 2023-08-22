@@ -23,6 +23,8 @@ public interface ImageService {
 
 	public List<Image> list() throws Exception;
 
+	public void modifyWriter(String oldNickname, String nickname) throws Exception;
+
 
 
 

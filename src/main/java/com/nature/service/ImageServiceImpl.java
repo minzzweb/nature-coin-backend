@@ -72,6 +72,19 @@ public class ImageServiceImpl implements ImageService {
         return recentImages;
 	}
 
+	@Override
+	public void modifyWriter(String oldNickname, String newNickname) throws Exception {
+		
+		List<Image> Images =  repository.findByImageWriter(oldNickname);
+		
+		for(Image image : Images) {
+			image.setImageWriter(newNickname);
+			
+			repository.save(image);
+		}
+		
+	}
+
 	
 
 
