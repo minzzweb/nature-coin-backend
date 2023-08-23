@@ -18,6 +18,8 @@ public interface MemberService {
 
 	public String findNickNamebyEmail(String email) throws Exception;
 
+	public Member findbyNickname(String imageWriter) throws Exception;
+
 	
 
 	

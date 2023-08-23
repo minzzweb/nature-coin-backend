@@ -89,5 +89,11 @@ public class MemberServiceImpl implements MemberService {
 		
 		return nickname;
 	}
+
+	@Override
+	public Member findbyNickname(String imageWriter) throws Exception {
+	
+		return repository.findByNickname(imageWriter);
+	}
 	
 }

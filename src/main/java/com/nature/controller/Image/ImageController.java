@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nature.common.security.domain.CustomUser;
 import com.nature.domain.Category;
 import com.nature.domain.Image;
+import com.nature.domain.Member;
 import com.nature.service.CategoryService;
 import com.nature.service.ImageService;
 import com.nature.service.MemberService;
@@ -154,6 +155,39 @@ public class ImageController {
 		return entity;
 	}
 
+	//게시판 작성자 프로필 가져오기 
+		// 가져오기===================================================================
+		@GetMapping("/display/profile")
+		public ResponseEntity<byte[]> displayProfileFile(String imageWriter) throws Exception {
+
+			ResponseEntity<byte[]> entity = null;
+
+			log.info("imageWriter " + imageWriter);
+			
+			//작성자를 member서비스에서 닉네임으로 찾아서 그 이메일을 가지고 와야함
+			Member member =  memberService.findbyNickname(imageWriter);
+			String fileName = memberService.getPicture(member.getEmail());
+
+			log.info("FILE NAME: " + fileName);
+
+			try {
+				String formatName = fileName.substring(fileName.lastIndexOf(".") + 1);
+				MediaType mediaType = getMediaType(formatName);
+				HttpHeaders headers = new HttpHeaders();
+				File file = new File(uploadPath + File.separator + fileName);
+
+				if (mediaType != null) {
+					headers.setContentType(mediaType);
+				}
+				entity = new ResponseEntity<byte[]>(FileCopyUtils.copyToByteArray(file), headers, HttpStatus.CREATED);
+			} catch (Exception e) {
+				e.printStackTrace();
+				entity = new ResponseEntity<byte[]>(HttpStatus.BAD_REQUEST);
+			}
+			return entity;
+		}
+		
+		
 	private MediaType getMediaType(String formatName) {
 
 		if (formatName != null) {
@@ -172,6 +206,9 @@ public class ImageController {
 
 		return null;
 	}
+	
+
+	
 
 	// 이미지 게시판 수정
 	// ===================================================================
