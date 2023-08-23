@@ -190,7 +190,7 @@ public class MemberController {
 	}
 	
 	// 이미지 사진
-		// 가져오기===================================================================
+	// 가져오기===================================================================
 	@GetMapping("/display")
 	public ResponseEntity<byte[]> displayFile(String email) throws Exception {
 
@@ -221,5 +221,7 @@ public class MemberController {
 			}
 						
 		}	
+	
+
 		
 }
