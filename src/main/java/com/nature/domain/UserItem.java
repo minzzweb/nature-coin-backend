@@ -30,16 +30,13 @@ public class UserItem {
 	private Long userItemNo;
 
 	private Long userNo;
+	
 	private Long itemId;
 
 	@Transient
 	private String itemName;
 	@Transient
 	private Integer price;
-	@Transient
-	private String description;
-	@Transient
-	private String pictureUrl;
 
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm")
 	@CreationTimestamp

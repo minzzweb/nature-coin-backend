@@ -31,6 +31,7 @@ public class UserItemController {
 
 		log.info("read : userNo " + userNo);
 
-		return new ResponseEntity<>(service.list(userNo), HttpStatus.OK);
+		//return new ResponseEntity<>(service.list(userNo), HttpStatus.OK);
+		return null;
 	}
 }

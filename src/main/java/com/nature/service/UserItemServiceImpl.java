@@ -4,48 +4,46 @@ import org.springframework.stereotype.Service;
 
 import com.nature.domain.Member;
 import com.nature.domain.UserItem;
+import com.nature.dto.Item;
 import com.nature.repository.MemberRepository;
 import com.nature.repository.UserItemRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class UserItemServiceImpl implements UserItemService {
 
 	private final UserItemRepository userItemRepository;
-	
-	
-	
 	private final MemberRepository memberRepository;
-	
+		
 	@Transactional
 	@Override
-	public void register(Member member, Long itemId) {
+	public void register(Member member, Item item) throws Exception {
 		
 		Long userNo = member.getUserNo();
+		Long itemId = item.getItemId();
 		
-		//Long itemId = item.getItemId(); 보류
-		//int price = item.getPrice(); 보류
-		
+		log.info("item register :" +userNo + " , "+  itemId);
+			
 		UserItem userItem = new UserItem();
 		userItem.setUserNo(userNo);
 		userItem.setItemId(itemId);
 		
-		
 		Member memberEntity = memberRepository.getOne(userNo);
-		int coin = memberEntity.getCoin();
-	
 		
-		//memberEntity.setCoin(coin - amount);
+		int coin = memberEntity.getCoin();
+		int price = item.getPrice();
+		
+		memberEntity.setCoin(coin-price);
 		
 		memberRepository.save(memberEntity);
 		userItemRepository.save(userItem);
-		
 	}
 
-   //사용자 구매 상품 목록
 	
 
 }
