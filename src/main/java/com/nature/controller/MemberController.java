@@ -1,4 +1,4 @@
-package com.nature.controller.member;
+package com.nature.controller;
 
 import java.io.File;
 import java.io.IOException;

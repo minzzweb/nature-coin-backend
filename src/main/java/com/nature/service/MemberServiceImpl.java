@@ -95,5 +95,12 @@ public class MemberServiceImpl implements MemberService {
 	
 		return repository.findByNickname(imageWriter);
 	}
+
+	@Override
+	public int getCoin(Long userNo) throws Exception {
+		
+		Member member = repository.getOne(userNo);
+		return member.getCoin();
+	}
 	
 }

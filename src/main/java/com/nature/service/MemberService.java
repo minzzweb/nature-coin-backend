@@ -20,6 +20,8 @@ public interface MemberService {
 
 	public Member findbyNickname(String imageWriter) throws Exception;
 
+	public int getCoin(Long userNo) throws Exception;
+
 	
 
 	
