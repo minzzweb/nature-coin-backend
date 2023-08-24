@@ -1,5 +1,7 @@
 package com.nature.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.nature.domain.Member;
@@ -45,5 +47,13 @@ public class UserItemServiceImpl implements UserItemService {
 	}
 
 	
+	@Override
+	public List<UserItem> list(Long userNo) throws Exception {
+		
+		log.info("List<UserItem> list(Long userNo) " + userNo);
+		
+		return userItemRepository.findByUserNo(userNo);
+		
+	}
 
 }

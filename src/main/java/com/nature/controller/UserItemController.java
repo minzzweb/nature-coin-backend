@@ -1,10 +1,13 @@
 package com.nature.controller;
 
+
+
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
+@CrossOrigin(origins = { "http://localhost:8081", "http://localhost:3000" })
 @RequestMapping("/useritems")
 public class UserItemController {
 	
@@ -29,9 +33,10 @@ public class UserItemController {
 	public ResponseEntity<List<UserItem>> list(@AuthenticationPrincipal CustomUser customUser) throws Exception {
 		Long userNo = customUser.getUserNo();
 
-		log.info("read : userNo " + userNo);
+		log.info("*******UserItem : userNo " + userNo);
 
-		//return new ResponseEntity<>(service.list(userNo), HttpStatus.OK);
-		return null;
+		System.out.println("service.list(userNo)" + service.list(userNo));
+		
+		return new ResponseEntity<>(service.list(userNo), HttpStatus.OK);
 	}
 }
