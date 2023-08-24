@@ -33,11 +33,6 @@ public class UserItem {
 	
 	private Long itemId;
 
-	@Transient
-	private String itemName;
-	@Transient
-	private Integer price;
-
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm")
 	@CreationTimestamp
 	private LocalDateTime regDate;
