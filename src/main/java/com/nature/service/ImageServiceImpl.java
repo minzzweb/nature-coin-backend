@@ -73,6 +73,7 @@ public class ImageServiceImpl implements ImageService {
 	}
 
 	@Override
+	@Transactional
 	public void modifyWriter(String oldNickname, String newNickname) throws Exception {
 		
 		List<Image> Images =  repository.findByImageWriter(oldNickname);
