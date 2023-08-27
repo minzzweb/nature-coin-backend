@@ -69,6 +69,7 @@ public class SecurityConfig {
 	                 .requestMatchers("/users/**").permitAll()
 	                 .requestMatchers("/image/**").permitAll()
 	                 .requestMatchers("/items/**").permitAll()
+	                 .requestMatchers("/coins/**").permitAll()
 	                 .requestMatchers("/useritems/**").permitAll()
 	        		 .requestMatchers("/admin/**").hasAuthority("ADMIN")
 	        	    // .requestMatchers(HttpMethod.GET, "/image/**").permitAll()
