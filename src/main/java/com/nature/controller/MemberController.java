@@ -156,6 +156,8 @@ public class MemberController {
 
 		return null;
 	}
+	
+	
 	//최초 관리자 생성 
 	@PostMapping(value = "/setup", produces="text/plain;charset=UTF-8")
 	public ResponseEntity<String> setupAdmin(@Validated @RequestBody Member member)throws Exception {
