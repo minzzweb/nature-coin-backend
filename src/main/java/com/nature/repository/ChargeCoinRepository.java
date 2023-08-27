@@ -6,4 +6,6 @@ import com.nature.domain.ChargeCoin;
 
 public interface ChargeCoinRepository extends JpaRepository<ChargeCoin, Long> {
 
+	public ChargeCoin findByImageId(Long imageId);
+
 }
