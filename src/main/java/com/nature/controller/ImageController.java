@@ -8,22 +8,22 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Role;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +33,8 @@ import com.nature.common.security.domain.CustomUser;
 import com.nature.domain.Category;
 import com.nature.domain.Image;
 import com.nature.domain.Member;
+import com.nature.dto.PageRequestVO;
+import com.nature.dto.PaginationDTO;
 import com.nature.service.CategoryService;
 import com.nature.service.ImageService;
 import com.nature.service.MemberService;
@@ -270,17 +272,31 @@ public class ImageController {
 	// ===================================================================
 	
 	@GetMapping("/list/{categoryName}") 
-	public ResponseEntity<List<Image>> list(@PathVariable("categoryName") String categoryName) throws Exception {
+	public ResponseEntity<PaginationDTO<Image>> list(@PathVariable("categoryName") String categoryName,
+		 PageRequestVO pageRequestVO
+		) throws Exception {
 	     
-		log.info("categoryName = " + categoryName);
-	    
-	    Category categoryEntity = categoryService.findByCategoryName(categoryName).get();
-	   
-		List<Image> imageList = this.imageService.listByCategoryId(categoryEntity);
-		 
-		log.info("imageList = " + imageList);
 		
-		return new ResponseEntity<>(imageList,HttpStatus.OK);
+		log.info("categoryName = " + categoryName);
+		log.info("pageRequestVO = " + pageRequestVO.getPage());
+	    Category categoryEntity = categoryService.findByCategoryName(categoryName).get();
+	    
+	    Page<Image> imagePage = this.imageService.listByCategoryId(categoryEntity,pageRequestVO);
+		 
+		log.info("imagePage = " + imagePage);
+		
+		List<Image> images = imagePage.getContent(); 
+	    for (Image image : images) {
+	       log.info("Image: id=" + image.getImageId() + ", title=" + image.getImageTitle()); // 이미지 정보 로그로 출력
+	    }
+	    
+	    PaginationDTO<Image> paginationDTO = new PaginationDTO<>(imagePage);
+	    
+	    log.info("paginationDTO = " + paginationDTO); // PaginationDTO 정보 로그로 출력
+	    log.info("paginationDTO totalPageCount = " + paginationDTO.getTotalPageCount()); // PaginationDTO 정보 로그로 출력
+	
+	    
+	    return new ResponseEntity<>(paginationDTO, HttpStatus.OK);
 		
 
 	}

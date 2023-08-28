@@ -4,8 +4,11 @@ package com.nature.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+
 import com.nature.domain.Category;
 import com.nature.domain.Image;
+import com.nature.dto.PageRequestVO;
 
 public interface ImageService {
 
@@ -19,7 +22,7 @@ public interface ImageService {
 
 	public void remove(Long imageId) throws Exception;
 
-	public List<Image> listByCategoryId(Category category) throws Exception;
+	public Page<Image> listByCategoryId(Category category,PageRequestVO pageRequestVO ) throws Exception;
 
 	public List<Image> list() throws Exception;
 

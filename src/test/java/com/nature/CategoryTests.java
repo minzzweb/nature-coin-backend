@@ -72,13 +72,13 @@ public class CategoryTests {
 		System.out.println("category.getCategoryId( )= "  + category.getCategoryId());
 		System.out.println("category.getCategoryName( )= "  + category.getCategoryName());
 	
-		  List<Image> imagesInCategory = imageRepository.findAllByCategoryId(category);
-		  
-		for (Image image : imagesInCategory) {
-	        System.out.println("Image ID: " + image.getImageId());
-	        System.out.println("Image Title: " + image.getImageTitle());
-	      
-	    }
+//		  List<Image> imagesInCategory = imageRepository.findAllByCategoryId(category);
+//		  
+//		for (Image image : imagesInCategory) {
+//	        System.out.println("Image ID: " + image.getImageId());
+//	        System.out.println("Image Title: " + image.getImageTitle());
+//	      
+//	    }
 		
 	}
 	
