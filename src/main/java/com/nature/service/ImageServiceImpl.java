@@ -75,12 +75,15 @@ public class ImageServiceImpl implements ImageService {
 	}
 
 	@Override
-	public List<Image> list() throws Exception {
+	public Page<Image> list(PageRequestVO pageRequestVO) throws Exception {
 		
-		Sort sort = Sort.by(Sort.Direction.DESC, "imageId");
-        Pageable pageable = PageRequest.of(0, 12, sort);
-        List<Image> recentImages = repository.findAll(pageable).getContent();
-        return recentImages;
+		int pageNumber = pageRequestVO.getPage() - 1;
+		int sizePerPage = pageRequestVO.getSizePerPage();
+		
+		Pageable pageRequest = PageRequest.of(pageNumber, sizePerPage, Sort.Direction.DESC, "imageId");
+		
+		Page<Image> page = repository.findAll(pageRequest);
+        return page;
 	}
 
 	@Override
@@ -98,9 +101,15 @@ public class ImageServiceImpl implements ImageService {
 	}
 
 	@Override
-	public List<Image> mypageImagelist(String imageWriter) throws Exception {
+	public Page<Image> mypageImagelist(String imageWriter,PageRequestVO pageRequestVO) throws Exception {
 		
-		return repository.findByImageWriter(imageWriter);
+		int pageNumber = pageRequestVO.getPage() - 1;
+		int sizePerPage = pageRequestVO.getSizePerPage();
+		Pageable pageRequest = PageRequest.of(pageNumber, sizePerPage, Sort.Direction.DESC, "imageId");
+		
+		Page<Image> page =  repository.findByImageWriter(imageWriter,pageRequest);
+		
+		return page;
 	}
 
 	

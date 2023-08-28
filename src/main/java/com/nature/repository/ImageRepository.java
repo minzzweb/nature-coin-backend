@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.nature.domain.Category;
 import com.nature.domain.Image;
+import com.nature.dto.PageRequestVO;
 
 public interface ImageRepository extends JpaRepository<Image, Long>{
 
@@ -16,6 +17,8 @@ public interface ImageRepository extends JpaRepository<Image, Long>{
 	 List<Image> findByImageWriter(String nickname);
 
 	 Page<Image> findAllByCategoryId(Category category, Pageable pageRequest);
+
+	 Page<Image> findByImageWriter(String imageWriter, Pageable pageRequest);
 
 
 

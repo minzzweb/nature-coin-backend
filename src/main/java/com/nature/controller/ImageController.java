@@ -304,33 +304,48 @@ public class ImageController {
 	// 메인 이미지 목록
 	// ===================================================================
 	@GetMapping
-	public ResponseEntity<List<Image>> list() throws Exception {
+	public ResponseEntity<PaginationDTO<Image>> list(PageRequestVO pageRequestVO) throws Exception {
 		
-		log.info("main list");
-		List<Image> ImageList = this.imageService.list();
+		log.info("main list : getPage()" + pageRequestVO.getPage());
+		Page<Image> mypageImagePage = this.imageService.list(pageRequestVO);
 		
-		System.out.println("ImageList" +ImageList);
+		
+		PaginationDTO<Image> paginationDTO = new PaginationDTO<>(mypageImagePage);
+		
+		log.info("main list paginationDTO = " + paginationDTO); // PaginationDTO 정보 로그로 출력
+	    log.info("main list paginationDTO totalPageCount = " + paginationDTO.getTotalPageCount()); // PaginationDTO 정보 로그로 출력
 
-	   return new ResponseEntity<>(ImageList, HttpStatus.OK);
+
+	   return new ResponseEntity<>(paginationDTO, HttpStatus.OK);
 		
 	}
+	
+	
+
 	
 	// 마이페이지 이미지 목록
     // ===================================================================
 	@GetMapping("/mypage/list/myimage/{imageWriter}")
-	public ResponseEntity<List<Image>> mypageImageList(@PathVariable("imageWriter") String imageWriter) throws Exception{
+	public ResponseEntity<PaginationDTO<Image>> mypageImageList(@PathVariable("imageWriter") String imageWriter , PageRequestVO pageRequestVO
+			) throws Exception{
 		
 		log.info("mypageImage list : imageWriter " + imageWriter);
-		List<Image> mypageImageList = this.imageService.mypageImagelist(imageWriter);
 		
-		for(Image images : mypageImageList) {
+		Page<Image> mypageImagePage = this.imageService.mypageImagelist(imageWriter,pageRequestVO);
+		
+		for(Image images : mypageImagePage) {
 			System.out.println(images.getImageTitle());
 		}
 		
-		return new ResponseEntity<>(mypageImageList, HttpStatus.OK);
+		PaginationDTO<Image> paginationDTO = new PaginationDTO<>(mypageImagePage);
+		
+
+		return new ResponseEntity<>(paginationDTO, HttpStatus.OK);
 	} 
 	
 		
+	
+	
 
 	
 }

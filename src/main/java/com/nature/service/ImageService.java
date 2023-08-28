@@ -24,11 +24,11 @@ public interface ImageService {
 
 	public Page<Image> listByCategoryId(Category category,PageRequestVO pageRequestVO ) throws Exception;
 
-	public List<Image> list() throws Exception;
+	public Page<Image> list(PageRequestVO pageRequestVO ) throws Exception;
 
 	public void modifyWriter(String oldNickname, String nickname) throws Exception;
 
-	public List<Image> mypageImagelist(String imageWriter) throws Exception;
+	public Page<Image> mypageImagelist(String imageWriter,PageRequestVO pageRequestVO) throws Exception;
 
 
 

@@ -9,7 +9,7 @@ public class PageRequestVO {
 	private int sizePerPage; //페이지당 아이템 개수
 	
 	public PageRequestVO() {
-		this.page = 1;
+		this.page = 1; 
 		this.sizePerPage = 12;
 	}
 	

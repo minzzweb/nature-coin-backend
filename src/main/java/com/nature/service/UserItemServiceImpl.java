@@ -2,11 +2,17 @@ package com.nature.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.nature.domain.Image;
 import com.nature.domain.Member;
 import com.nature.domain.UserItem;
 import com.nature.dto.Item;
+import com.nature.dto.PageRequestVO;
 import com.nature.repository.MemberRepository;
 import com.nature.repository.UserItemRepository;
 
@@ -48,11 +54,16 @@ public class UserItemServiceImpl implements UserItemService {
 
 	
 	@Override
-	public List<UserItem> list(Long userNo) throws Exception {
+	public Page<UserItem> list(Long userNo,PageRequestVO pageRequestVO) throws Exception {
 		
+		int pageNumber = pageRequestVO.getPage() - 1;
+		int sizePerPage = pageRequestVO.getSizePerPage();
+		
+		Pageable pageRequest = PageRequest.of(pageNumber, sizePerPage, Sort.Direction.DESC, "userItemNo");
 		log.info("List<UserItem> list(Long userNo) " + userNo);
 		
-		return userItemRepository.findByUserNo(userNo);
+		Page<UserItem> page = userItemRepository.findByUserNo(userNo,pageRequest);
+		return page;
 		
 	}
 
