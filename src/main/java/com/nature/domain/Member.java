@@ -49,7 +49,7 @@ public class Member {
 	private String email;
 	
 	@NotBlank
-	@Column(length = 100, nullable = false)
+	@Column(length = 100, nullable = false , unique = true)
 	private String nickname;
 	
 	@NotBlank

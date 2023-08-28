@@ -173,7 +173,7 @@ public class MemberController {
 		}
 		
 		//최초 관리 생성 불가 메세지 
-		String message = messageSource.getMessage("최초관리자를 등록할 수 없습니다.", null, Locale.KOREAN);
+		String message = messageSource.getMessage("common.cannotSetupAdmin", null, Locale.KOREAN);
 		
 		return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
 	}
@@ -226,6 +226,24 @@ public class MemberController {
 						
 		}	
 	
+	//닉네임 중복체크 
+	@GetMapping(value = "/check/{nickname}",produces = "text/plain;charset=UTF-8")
+	public ResponseEntity<String> checkNicknameDuplicate(@PathVariable String nickname) throws Exception{
+		
+		log.info("check nickname " + nickname);
+		 
+		
+		if(memberService.checkNicknameDuplication(nickname) == true) {
+			String message = messageSource.getMessage("users.nicknameDuplicate", null, Locale.KOREAN);		
+			
+			return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);	
+		}else {
+				
+			 String message = messageSource.getMessage("users.nicknameAvailable", null, Locale.KOREAN);
+		        return new ResponseEntity<>(message, HttpStatus.OK);
+		}
+		
+	}
 
 		
 }

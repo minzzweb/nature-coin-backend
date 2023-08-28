@@ -1,8 +1,8 @@
 package com.nature.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.nature.domain.Image;
 import com.nature.domain.Member;
 import com.nature.domain.MemberAuth;
 import com.nature.repository.MemberRepository;
@@ -101,6 +101,15 @@ public class MemberServiceImpl implements MemberService {
 		
 		Member member = repository.getOne(userNo);
 		return member.getCoin();
+	}
+	
+	//아이디 중복여부 
+	@Transactional(readOnly = true)
+	@Override
+	public boolean checkNicknameDuplication(String nickname) throws Exception {
+		boolean usernameDuplicate = repository.existsByNickname(nickname); //있으면 true
+		
+		return usernameDuplicate;
 	}
 	
 }

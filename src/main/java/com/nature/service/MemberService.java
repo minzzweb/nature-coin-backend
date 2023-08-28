@@ -22,7 +22,8 @@ public interface MemberService {
 
 	public int getCoin(Long userNo) throws Exception;
 
-	
+	//아이디 중복여부 
+	public boolean checkNicknameDuplication(String nickname) throws Exception;
 
 	
 }
