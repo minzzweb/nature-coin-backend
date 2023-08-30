@@ -35,7 +35,7 @@ public class CoinController {
 	private final MessageSource messageSource;
 	
 
-	// 코인 충전 
+	// 코인  지급
 	@PostMapping
 	public ResponseEntity<String> grantCoin(@RequestBody ChargeCoin chargeCoin) throws Exception{
 		

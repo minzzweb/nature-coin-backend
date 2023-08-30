@@ -325,7 +325,7 @@ public class ImageController {
 	
 	// 마이페이지 이미지 목록
     // ===================================================================
-	@GetMapping("/mypage/list/myimage/{imageWriter}")
+	@GetMapping("/myimage/{imageWriter}")
 	public ResponseEntity<PaginationDTO<Image>> mypageImageList(@PathVariable("imageWriter") String imageWriter , PageRequestVO pageRequestVO
 			) throws Exception{
 		
