@@ -244,6 +244,19 @@ public class MemberController {
 		}
 		
 	}
+	
+	//유저 코인 가져오기 
+    @GetMapping("/coin")
+    public ResponseEntity<Integer> getUserCoin (@AuthenticationPrincipal CustomUser customUser) throws Exception{
+    	
+    	long userNo= customUser.getUserNo();
+    	Member member = memberService.read(userNo);
+    	 
+    	Integer usercoin = member.getCoin();
+    	log.info("usercoin" + usercoin);
+    	
+    	return new ResponseEntity<Integer>(usercoin,HttpStatus.OK);
+    }
 
 		
 }
