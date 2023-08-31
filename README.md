@@ -29,3 +29,5 @@
 ## ER다이어그램 
 ![image](https://github.com/minzzweb/nature-coin-backend/assets/139015119/7edc797e-c997-4299-a416-1ab1a0146a9c)
 
+## 시연 영상 & 블로그
+https://minjoo0603.tistory.com/59
