@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +34,8 @@ public class ItemController {
 	  private final UserItemService userItemService;
 	  private final MessageSource messageSource;
 	
+	  
+		
       //상품 구매
 	  @PostMapping(value = "/buy",produces = "text/plain;charset=UTF-8")
 	  public ResponseEntity<String> buy(@RequestBody Item item,@AuthenticationPrincipal CustomUser customUser ) throws Exception{
