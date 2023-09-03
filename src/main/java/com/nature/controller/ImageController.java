@@ -13,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -59,7 +60,7 @@ public class ImageController {
 	// 이미지 게시글 등록
 	// ===================================================================
 	
-    //@PreAuthorize("hasRole('MEMBER')")
+    @PreAuthorize("hasRole('MEMBER')")
 	@PostMapping
 	public ResponseEntity<Image> register(@RequestPart("image") String imageString,
 			@RequestPart("file") MultipartFile picture, @RequestPart("categoryId") String categoryId,
@@ -214,6 +215,7 @@ public class ImageController {
 
 	// 이미지 게시판 수정
 	// ===================================================================
+	@PreAuthorize("hasRole('MEMBER')")
 	@PutMapping
 	public ResponseEntity<Image> modify(@RequestPart("image") String imageString,
 			@RequestPart(name = "file", required = false) MultipartFile picture) throws Exception {
@@ -258,6 +260,7 @@ public class ImageController {
 	
 	// 이미지 게시판 삭제
 	// ===================================================================
+	@PreAuthorize("hasRole('MEMBER')")
 	@DeleteMapping("/{imageId}")
 	public ResponseEntity<Void> remove(@PathVariable("imageId") Long imageId) throws Exception {
 		log.info("remove");

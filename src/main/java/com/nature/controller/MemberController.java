@@ -80,6 +80,7 @@ public class MemberController {
 	
 	
     //회원 프로필 수정
+	@PreAuthorize("hasAnyRole('ADMIN','MEMBER')")
 	@PutMapping
 	public ResponseEntity<Member> modify(@RequestPart("member") String memberString, 
 			@RequestPart(name = "file", required = false) MultipartFile picture,@AuthenticationPrincipal CustomUser customUser) throws Exception { 
@@ -246,6 +247,7 @@ public class MemberController {
 	}
 	
 	//유저 코인 가져오기 
+	@PreAuthorize("hasAnyRole('MEMBER')")
     @GetMapping("/coin")
     public ResponseEntity<Integer> getUserCoin (@AuthenticationPrincipal CustomUser customUser) throws Exception{
     	
@@ -255,6 +257,7 @@ public class MemberController {
     	Integer usercoin = member.getCoin();
     	log.info("usercoin" + usercoin);
     	
+    
     	return new ResponseEntity<Integer>(usercoin,HttpStatus.OK);
     }
 

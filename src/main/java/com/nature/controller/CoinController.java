@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +37,7 @@ public class CoinController {
 	
 
 	// 코인  지급
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@PostMapping
 	public ResponseEntity<String> grantCoin(@RequestBody ChargeCoin chargeCoin) throws Exception{
 		
@@ -65,7 +67,7 @@ public class CoinController {
 		}	
 	}
 	
-	
+	@PreAuthorize("hasAnyRole('ADMIN','MEMBER')")
 	@GetMapping
 	public ResponseEntity<List<ChargeCoin>> list() throws Exception {
 
@@ -77,7 +79,7 @@ public class CoinController {
 	   return new ResponseEntity<>(chargeCoins, HttpStatus.OK);
      
 	}
-	
+	@PreAuthorize("hasAnyRole('ADMIN','MEMBER')")
 	@GetMapping("/{imageId}")
 	public ResponseEntity<Boolean> granted(@PathVariable("imageId") Long imageId) throws Exception {
 	    

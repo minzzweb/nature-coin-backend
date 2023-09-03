@@ -4,6 +4,7 @@ import java.util.Arrays;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -66,16 +67,19 @@ public class SecurityConfig {
 	         .authorizeHttpRequests((authorize) -> authorize
 	        		 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
 	                 .requestMatchers("/*").permitAll()
-	                 .requestMatchers("/users/**").permitAll()
-	                 .requestMatchers("/image/**").permitAll()
-	                 .requestMatchers("/items/**").permitAll()
-	                 .requestMatchers("/coins/**").permitAll()
+	                 .requestMatchers(HttpMethod.GET, "/image/**").permitAll()
+	        		 .requestMatchers(HttpMethod.POST, "/image/**").hasAnyRole("MEMBER")
+	        		 .requestMatchers(HttpMethod.PUT, "/image/**").hasAnyRole("MEMBER")
+	        		 .requestMatchers(HttpMethod.DELETE, "/image/**").hasAnyRole("MEMBER","ADMIN")
+	        		 .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
+	        		 .requestMatchers(HttpMethod.PUT, "/users/**").hasAnyRole("MEMBER", "ADMIN")
+	        		 .requestMatchers(HttpMethod.GET, "/users/coin/**").hasAnyRole("MEMBER")
+	        		 .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
+                     .requestMatchers(HttpMethod.POST,"/items/**").hasAnyRole("MEMBER")
+                     .requestMatchers(HttpMethod.GET,"/useritems/**").hasAnyRole("MEMBER")
+	                 .requestMatchers(HttpMethod.POST,"/coins/**").hasAnyRole("ADMIN")
+	                 .requestMatchers(HttpMethod.GET,"/coins/**").hasAnyRole("MEMBER", "ADMIN")
 	                 .requestMatchers("/useritems/**").permitAll()
-	        		 .requestMatchers("/admin/**").hasAuthority("ADMIN")
-	        	    // .requestMatchers(HttpMethod.GET, "/image/**").permitAll()
-	        		 //.requestMatchers(HttpMethod.POST, "/image/**").hasAnyRole("MEMBER")
-	        		 //.requestMatchers(HttpMethod.PUT, "/image/**").hasAnyRole("MEMBER")
-	        		 //.requestMatchers(HttpMethod.DELETE, "/image/**").hasAnyRole("MEMBER")
 	        		 .anyRequest().authenticated()
 	        		
 	         );

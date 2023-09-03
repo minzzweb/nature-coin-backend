@@ -5,6 +5,7 @@ import java.util.Locale;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +38,7 @@ public class ItemController {
 	  
 		
       //상품 구매
+	  @PreAuthorize("hasAnyRole('MEMBER')")
 	  @PostMapping(value = "/buy",produces = "text/plain;charset=UTF-8")
 	  public ResponseEntity<String> buy(@RequestBody Item item,@AuthenticationPrincipal CustomUser customUser ) throws Exception{
 		

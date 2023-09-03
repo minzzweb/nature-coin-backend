@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +34,7 @@ public class UserItemController {
 	private final UserItemService service;
 
 	//구매상품 목록
+	@PreAuthorize("hasAnyRole('MEMBER')")
 	@GetMapping
 	public ResponseEntity<PaginationDTO<UserItem>> list(@AuthenticationPrincipal CustomUser customUser,PageRequestVO pageRequestVO) throws Exception {
 		Long userNo = customUser.getUserNo();
