@@ -17,17 +17,21 @@
 ✅ REST API , JPA , JWT 
 
 ## 기능 (BACKEND)
-![image](https://github.com/minzzweb/nature-coin-backend/assets/139015119/a417495e-edab-4f42-85c0-742ca09254c8)
+
+![기능](https://github.com/minzzweb/nature-coin-backend/assets/139015119/35a722d4-f753-4f99-aee7-0d33a30ee178)
 
 
 ## 요구분석
-![image](https://github.com/minzzweb/nature-coin-backend/assets/139015119/bd91f2cf-1ae3-457f-82f9-5488a9d98a78)
+![요수분석](https://github.com/minzzweb/nature-coin-backend/assets/139015119/4bc58226-4b7d-4d99-b93f-4cf3a5176bbe)
+
 
 ## REST API
-![image](https://github.com/minzzweb/nature-coin-backend/assets/139015119/95c9bd59-2ae5-4852-ab82-6597579cc904)
+![api](https://github.com/minzzweb/nature-coin-backend/assets/139015119/1d4ba526-fbcd-45a6-8f03-54201d09e0f0)
+
 
 ## ER다이어그램 
-![image](https://github.com/minzzweb/nature-coin-backend/assets/139015119/7edc797e-c997-4299-a416-1ab1a0146a9c)
+![er](https://github.com/minzzweb/nature-coin-backend/assets/139015119/2b35ac02-73d7-47bd-8f8f-892297c1dc0f)
+
 
 ## 시연 영상 & 블로그
 https://minjoo0603.tistory.com/59
